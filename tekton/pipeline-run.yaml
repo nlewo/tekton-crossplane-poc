@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: tutorial-pipeline-run-1
+spec:
+  pipelineRef:
+    name: tutorial-pipeline
+  resources:
+    - name: app-repo
+      resourceRef:
+        name: app-git
+    - name: poc-repo
+      resourceRef:
+        name: poc-git
+    - name: app-image
+      resourceRef:
+        name: rest-api-image

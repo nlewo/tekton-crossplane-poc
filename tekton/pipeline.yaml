@@ -1,0 +1,44 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: tutorial-pipeline
+spec:
+  resources:
+    - name: app-repo
+      type: git
+    - name: poc-repo
+      type: git
+    - name: app-image
+      type: image
+  tasks:
+    - name: build-app
+      taskRef:
+        name: build-docker-image-from-git-source
+      params:
+        - name: pathToDockerFile
+          value: Dockerfile
+        - name: pathToContext
+          value: /workspace/docker-source/rest-api
+      resources:
+        inputs:
+          - name: docker-source
+            resource: app-repo
+        outputs:
+          - name: builtImage
+            resource: app-image
+    - name: deploy-app
+      taskRef:
+        name: deploy-using-kubectl
+      resources:
+        inputs:
+          - name: source
+            resource: poc-repo
+          - name: image
+            resource: app-image
+            from:
+              - build-app
+      params:
+        - name: path
+          value: /workspace/source/crossplane/restapi-deployment.yml
+        - name: yamlPathToImage
+          value: "spec.template.spec.containers[0].image"

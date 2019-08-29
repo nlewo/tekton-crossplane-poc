@@ -1,0 +1,9 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: rest-api-image
+spec:
+  type: image
+  params:
+    - name: url
+      value: 181151069204.dkr.ecr.eu-west-1.amazonaws.com/rj45:latest
