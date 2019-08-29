@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
-  name: tutorial-pipeline
+  name: restapi-pipeline
 spec:
   resources:
     - name: app-repo
@@ -26,6 +26,16 @@ spec:
         outputs:
           - name: builtImage
             resource: app-image
+    - name: validate-deployment
+      taskRef:
+        name: kubeval
+      resources:
+        inputs:
+          - name: source
+            resource: poc-repo
+      params:
+        - name: files
+          value: crossplane/restapi-deployment.yml
     - name: deploy-app
       taskRef:
         name: deploy-using-kubectl
