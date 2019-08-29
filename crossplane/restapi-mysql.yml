@@ -1,0 +1,7 @@
+apiVersion: database.crossplane.io/v1alpha1
+kind: MySQLInstance
+metadata:
+  name: mysql-restapi-instance
+spec:
+  writeConnectionSecretToRef:
+    name: mysql-restapi-instance
