@@ -10,9 +10,39 @@ spec:
       labels:
         app: restapi
     spec:
+      initContainers:
+      - name: setup-db
+        image: arey/mysql-client:latest
+        env:
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-restapi-instance
+              key: endpoint
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-restapi-instance
+              key: username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-restapi-instance
+              key: password
+        - name: MYSQL_DATABASE
+          value: demo
+        command:
+          - mysql
+          - -h
+          - $(MYSQL_HOST)
+          - -u
+          - $(MYSQL_USER)
+          - -p$(MYSQL_PASSWORD)
+          - -e
+          - CREATE DATABASE IF NOT EXISTS $(MYSQL_DATABASE);
       containers:
       - name: restapi
-        image:
+        image: 181151069204.dkr.ecr.eu-west-1.amazonaws.com/rj45:latest
         env:
         - name: MYSQL_HOST
           valueFrom:
