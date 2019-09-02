@@ -5,6 +5,8 @@ metadata:
   namespace: default
 spec:
   params:
+    - name: gitshortrev
+      description: The short git revision
     - name: gitrevision
       description: The git revision
       default: master
@@ -16,7 +18,7 @@ spec:
     - apiVersion: tekton.dev/v1alpha1
       kind: PipelineResource
       metadata:
-        name: app-git
+        name: app-git-$(params.gitshortrev)
         namespace: $(params.namespace)
         labels:
           triggertemplated: "true"
@@ -30,7 +32,7 @@ spec:
     - apiVersion: tekton.dev/v1alpha1
       kind: PipelineRun
       metadata:
-        name: restapi-pipeline-run
+        name: restapi-pipeline-run-$(params.gitshortrev)
         namespace: $(params.namespace)
         labels:
           triggertemplated: "true"
@@ -40,7 +42,7 @@ spec:
         resources:
           - name: app-repo
             resourceRef:
-              name: app-git
+              name: app-git-$(params.gitshortrev)
           - name: poc-repo
             resourceRef:
               name: poc-git

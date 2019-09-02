@@ -5,6 +5,8 @@ metadata:
   namespace: default
 spec:
   params:
+    - name: gitshortrev
+      value: $(event.head_commit.id|@cut:6)
     - name: gitrevision
       value: $(event.head_commit.id)
     - name: gitrepositoryurl
