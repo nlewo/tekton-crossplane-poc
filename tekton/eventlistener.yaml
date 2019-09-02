@@ -1,0 +1,12 @@
+apiVersion: tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: restapi-listener
+  namespace: default
+spec:
+  serviceAccountName: default
+  triggers:
+    - binding:
+        name: restapi-binding
+      template:
+        name: restapi-template
