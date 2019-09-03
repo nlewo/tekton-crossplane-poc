@@ -1,10 +1,10 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
-  name: tutorial-pipeline-run-1
+  name: restapi-pipeline-run
 spec:
   pipelineRef:
-    name: tutorial-pipeline
+    name: restapi-pipeline
   resources:
     - name: app-repo
       resourceRef:

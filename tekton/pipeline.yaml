@@ -52,3 +52,13 @@ spec:
           value: /workspace/source/crossplane/restapi-deployment.yml
         - name: yamlPathToImage
           value: "spec.template.spec.containers[0].image"
+    - name: test-deployment
+      runAfter:
+        - deploy-app
+      taskRef:
+        name: test-rest-api
+      params:
+        - name: service
+          value: restapi
+        - name: endpoint
+          value: endpoint/1

@@ -23,7 +23,7 @@ spec:
       command: ["sh"]
       args:
         - "-c"
-        - "cat /workspace/host | xargs -I '{}' -t curl -o /workspace/response.json http://'{}'/$(inputs.params.endpoint)"
+        - "cat /workspace/host | xargs -I '{}' -t curl -X POST http://'{}'/$(inputs.params.endpoint); cat /workspace/host | xargs -I '{}' -t curl -o /workspace/response.json http://'{}'/$(inputs.params.endpoint)"
     - name: check-json
       image: stedolan/jq
       command: ["sh"]
