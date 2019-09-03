@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: my-task-run
+  namespace: default
+spec:
+  taskRef:
+    name: test-rest-api
+  inputs:
+    params:
+      - name: service
+        value: restapi
+      - name: endpoint
+        value: endpoint/1

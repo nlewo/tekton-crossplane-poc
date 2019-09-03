@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: test-rest-api
+spec:
+  inputs:
+    params:
+      - name: service
+        type: string
+        description: The name of the Rest API service
+      - name: endpoint
+        type: string
+        description: The endpoint of the Rest API service
+  steps:
+    - name: run-kubectl
+      image: lachlanevenson/k8s-kubectl
+      command: ["sh"]
+      args:
+        - "-c"
+        - "kubectl get svc -o 'jsonpath={.status.loadBalancer.ingress[0].hostname}' $(inputs.params.service) > /workspace/host"
+    - name: curl-rest-api
+      image: pstauffer/curl:latest
+      command: ["sh"]
+      args:
+        - "-c"
+        - "cat /workspace/host | xargs -I '{}' -t curl -o /workspace/response.json http://'{}'/$(inputs.params.endpoint)"
+    - name: check-json
+      image: stedolan/jq
+      command: ["sh"]
+      args:
+        - "-c"
+        - "cat /workspace/response.json | jq -e '.name == \"myname\"'"
