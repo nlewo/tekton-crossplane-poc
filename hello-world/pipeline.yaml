@@ -1,0 +1,62 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: app-git
+spec:
+  type: git
+  params:
+    - name: revision
+      value: hello-world
+    - name: url
+      value: https://github.com/nlewo/tekton-crossplane-poc
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: hello-world-image
+spec:
+  type: image
+  params:
+    - name: url
+      value: lewo/tekton-hello-world:latest
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: restapi-pipeline
+spec:
+  resources:
+    - name: app-repo
+      type: git
+    - name: app-image
+      type: image
+  tasks:
+    - name: build-app
+      taskRef:
+        name: build-image-from-git-source
+      params:
+        - name: pathToContext
+          value: /workspace/source/rest-api
+      resources:
+        inputs:
+          - name: source
+            resource: app-repo
+        outputs:
+          - name: builtImage
+            resource: app-image
+    - name: deploy-app
+      taskRef:
+        name: deploy-using-kubectl
+      params:
+        - name: path
+          value: /workspace/source/hello-world/deployment.yaml
+        - name: yamlPathToImage
+          value: "spec.template.spec.containers[0].image"
+      resources:
+        inputs:
+          - name: source
+            resource: poc-repo
+          - name: image
+            resource: app-image
+            from:
+              - build-app
